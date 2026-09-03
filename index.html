@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Envía mensajes que viajan a la velocidad de una paloma.">
+  <title>Paloma</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <style>
+    :root {
+      --bg: #f5f1e8;
+      --card: #fffdf9;
+      --text: #22211f;
+      --muted: #777269;
+      --line: #ded8cc;
+      --accent: #232323;
+      --danger: #a3473e;
+      --ok: #3f7151;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(620px, calc(100% - 32px));
+      margin: 56px auto;
+    }
+
+    header { margin-bottom: 22px; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 7vw, 46px);
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      letter-spacing: -0.025em;
+    }
+
+    p { line-height: 1.55; }
+
+    .tagline, .muted {
+      color: var(--muted);
+    }
+
+    .tagline {
+      margin: 6px 0 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 12px 35px rgba(30, 25, 18, .05);
+    }
+
+    .stack { display: grid; gap: 15px; }
+
+    label {
+      display: grid;
+      gap: 7px;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid #cbc5ba;
+      border-radius: 11px;
+      padding: 12px 13px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      outline: none;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #777;
+      box-shadow: 0 0 0 3px rgba(0,0,0,.05);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      border: 0;
+      border-radius: 11px;
+      padding: 13px 16px;
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    button.secondary {
+      background: #eeebe4;
+      color: var(--text);
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row > * { flex: 1 1 160px; }
+
+    .hidden { display: none !important; }
+
+    .center { text-align: center; }
+
+    .flight {
+      position: relative;
+      height: 105px;
+      margin: 18px 0 6px;
+    }
+
+    .flight-line {
+      position: absolute;
+      left: 7%;
+      right: 7%;
+      top: 52px;
+      height: 2px;
+      background: var(--line);
+    }
+
+    .pigeon {
+      position: absolute;
+      left: 7%;
+      top: 19px;
+      transform: translateX(-50%);
+      font-size: 50px;
+      transition: left .8s linear;
+      filter: grayscale(.15);
+    }
+
+    .places {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      color: var(--muted);
+      font-size: 13px;
+      margin: -7px 3% 0;
+    }
+
+    .timer {
+      margin: 20px 0 4px;
+      font-size: clamp(38px, 10vw, 58px);
+      font-weight: 850;
+      letter-spacing: -0.055em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: #f0ede6;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .linkbox {
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 12px;
+      background: #f3f0e9;
+      overflow-wrap: anywhere;
+    }
+
+    .message {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #f8f5ef;
+      font-size: 19px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .icon {
+      font-size: 54px;
+      margin-bottom: 10px;
+    }
+
+    .danger { color: var(--danger); }
+    .success { color: var(--ok); }
+
+    .error {
+      min-height: 1.4em;
+      margin: 10px 0 0;
+      color: var(--danger);
+      font-size: 14px;
+    }
+
+    .foot {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .foot a { color: inherit; }
+
+    @media (max-width: 520px) {
+      main { margin: 28px auto; }
+      .card { padding: 19px; }
+    }
+  </style>
+</head>
+
+<body>
+<main>
+  <header>
+    <h1>🕊️ Paloma</h1>
+    <p class="tagline">Mensajes que viajan a 80 km/h.</p>
+  </header>
+
+  <section id="sendScreen" class="card">
+    <form id="sendForm" class="stack">
+      <div class="row">
+        <label>
+          Origen
+          <input id="origin" autocomplete="off" maxlength="120" placeholder="Madrid" required>
+        </label>
+        <label>
+          Destino
+          <input id="destination" autocomplete="off" maxlength="120" placeholder="Barcelona" required>
+        </label>
+      </div>
+
+      <label>
+        Destinatario
+        <input id="recipient" autocomplete="off" maxlength="120" placeholder="Lucía" required>
+      </label>
+
+      <label>
+        Mensaje
+        <textarea id="message" maxlength="5000" placeholder="Escribe tu mensaje..." required></textarea>
+      </label>
+
+      <label>
+        Clave
+        <input id="secret" type="password" minlength="4" maxlength="200" autocomplete="new-password" placeholder="Una clave que conozca el destinatario" required>
+      </label>
+
+      <button id="sendButton" type="submit">Enviar paloma</button>
+      <p id="sendError" class="error"></p>
+    </form>
+  </section>
+
+  <section id="travelScreen" class="card hidden center">
+    <span id="statePill" class="pill">En camino</span>
+    <h2 style="margin-top:12px">Tu paloma está volando</h2>
+
+    <div class="flight" aria-hidden="true">
+      <div class="flight-line"></div>
+      <div id="pigeon" class="pigeon">🕊️</div>
+    </div>
+
+    <div class="places">
+      <span id="originLabel"></span>
+      <span id="destinationLabel"></span>
+    </div>
+
+    <div id="timer" class="timer">--:--:--</div>
+    <p class="muted" style="margin-top:0">
+      <span id="distanceLabel"></span> · 80 km/h
+    </p>
+
+    <div id="shareBlock" class="linkbox hidden">
+      <strong>Envía este enlace al destinatario</strong>
+      <p id="shareUrl" style="font-size:14px"></p>
+      <button id="copyButton" class="secondary" type="button">Copiar enlace</button>
+    </div>
+  </section>
+
+  <section id="arrivalScreen" class="card hidden">
+    <div class="center">
+      <div class="icon">📨</div>
+      <h2>La paloma ha llegado</h2>
+      <p class="muted">Escribe tu nombre y la clave para abrir el mensaje.</p>
+    </div>
+
+    <form id="unlockForm" class="stack">
+      <label>
+        Tu nombre
+        <input id="receiverName" maxlength="120" autocomplete="name" required>
+      </label>
+      <label>
+        Clave
+        <input id="receiverSecret" type="password" maxlength="200" autocomplete="current-password" required>
+      </label>
+      <button type="submit">Abrir mensaje</button>
+      <p id="unlockError" class="error"></p>
+    </form>
+
+    <div id="openedBlock" class="hidden">
+      <div id="messageContent" class="message"></div>
+      <button id="newMessageButton" class="secondary" style="width:100%;margin-top:14px" type="button">
+        Enviar otro mensaje
+      </button>
+    </div>
+  </section>
+
+  <section id="lostScreen" class="card hidden center">
+    <div class="icon">🌧️🕊️</div>
+    <h2 class="danger">La paloma no ha llegado</h2>
+    <p class="muted">
+      El viaje se ha interrumpido. Puede haberse perdido, encontrado una tormenta
+      o tenido un encuentro poco amistoso.
+    </p>
+    <button id="lostNewButton" type="button">Enviar otra paloma</button>
+  </section>
+
+  <section id="notFoundScreen" class="card hidden center">
+    <div class="icon">🪶</div>
+    <h2>Mensaje no encontrado</h2>
+    <p class="muted">El enlace no existe o el envío ya no está disponible.</p>
+    <button id="notFoundNewButton" type="button">Volver al inicio</button>
+  </section>
+
+  <p class="foot">
+    Distancias aproximadas en línea recta. Geocodificación:
+    <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a>.
+  </p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./app.js"></script>
+</body>
+</html>
